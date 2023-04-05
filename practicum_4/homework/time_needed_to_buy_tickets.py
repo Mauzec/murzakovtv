@@ -3,15 +3,26 @@ from typing import Any
 import yaml
 import numpy as np
 
+from queue import Queue
+
 
 def time_taken(tickets: list[int], k: int) -> int:
+    # ~ O(MN): n: persons count, m: max tickets per person
+ 
     seconds_elapsed = 0
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    return seconds_elapsed
+    
+    queue = Queue()
+    for index, value in enumerate(tickets):
+    	queue.put((index,value))
+    
+    while queue:
+    	idx, val = queue.get()
+    	val -= 1
+    	seconds_elapsed += 1
+    	if (val != 0):
+    		queue.put((idx, val))
+    	elif (idx == k):
+    		return seconds_elapsed
 
 
 if __name__ == "__main__":
