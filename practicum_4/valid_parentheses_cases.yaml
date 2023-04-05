@@ -8,3 +8,5 @@
   output: true
 - input: "([][][]({[]]}))"
   output: false
+- input: "(){}}{"
+  output: false
