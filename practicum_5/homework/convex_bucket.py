@@ -7,19 +7,25 @@ from src.plotting import plot_points
 
 
 def convex_bucket(points: NDArray) -> NDArray:
-    """Complexity: O(n log n)"""
-    clockwise_sorted_ch = []
-
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-
-    return np.array(clockwise_sorted_ch)
+	# sort the points by x-coords
+	sorted_points = sorted(points, key=lambda x: (x[0]))
+	# list to store the lower part
+	lowers = []
+	
+	for point in sorted_points:
+		while len(lowers) >= 2 and (np.cross(lowers[-1] - lowers[-2], point - lowers[-2]) <= 0):
+			lowers.pop()
+		
+		lowers.append(point)
+	
+	print(sorted_points)
+	#print(lowers)
+	return np.array(lowers + lowers[-2::-1])
 
 
 if __name__ == "__main__":
     for i in range(1, 11):
-        txtpath = f"practicum_5/homework/points_{i}.txt"
+        txtpath = f"../points_{i}.txt"
         points = np.loadtxt(txtpath)
         print(f"Processing {txtpath}")
         print("-" * 32)
