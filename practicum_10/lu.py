@@ -3,17 +3,37 @@ from numpy.typing import NDArray
 
 
 def lu(A: NDArray, permute: bool) -> tuple[NDArray, NDArray, NDArray]:
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-    pass
+    # A[mxn]
+    m = A.shape[0]
+    
+    L = np.eye(m)
+    U = np.copy(A)
+    P = np.eye(m)
+    
+    for j in range(m - 1):
+        if permute:
+            # search abs-max-element index in j column
+            # MARK: search from j row to m
+            maxr = np.argmax(abs(U[j:, j])) + j
+            
+            # U_k <-> U_[maxr] and P_k <-> P_[maxr]
+            U[[j, maxr]] = U[[maxr, j]]
+            P[[j, maxr]] = P[[maxr, j]]
+            if j: L[[j, maxr], :j] = L[[maxr, j], :j]
+            
+        for i in range(j + 1, m - 1):
+            tmp = U[i, j] / U[j, j]
+            L[i, j] = tmp
+            U[i, j:] -= tmp * U[j, j:]
+            
+    return L, U, P
+    
 
 
 def solve(L: NDArray, U: NDArray, P: NDArray, b: NDArray) -> NDArray:
-    ##########################
-    ### PUT YOUR CODE HERE ###
-    ##########################
-    pass
+    Y = np.linalg.solve(L, P @ b)
+    X = np.linalg.solve(U, Y)
+    return X
 
 
 def get_A_b(a_11: float, b_1: float) -> tuple[NDArray, NDArray]:
@@ -25,7 +45,7 @@ def get_A_b(a_11: float, b_1: float) -> tuple[NDArray, NDArray]:
 if __name__ == "__main__":
     # Let's implement the LU decomposition with and without pivoting
     # and check its stability depending on the matrix elements
-    p = 14  # modify from 7 to 16 to check instability
+    p = 7  # modify from 7 to 16 to check instability
     a_11 = 3 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     b_1 = -16 + 10 ** (-p)  # add/remove 10**(-p) to check instability
     A, b = get_A_b(a_11, b_1)
